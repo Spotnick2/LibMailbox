@@ -121,7 +121,21 @@ WoW.inbox[4].missing = true
 local s8 = LM.ScanInbox()
 eq(#s8.mails, 5, "a missing header row is left out")
 check(s8.headers == false, "  and the headers aren't whole")
+check(s8.resolved == false, "  nor is the scan resolved: its fingerprint is unknown")
 WoW.inbox[4].missing = nil
+-- Twins with one row missing: the other looks unique to a count, so the scan
+-- must not claim to be resolved (a consumer acts only on a unique match).
+local twin = { sender = "Cowruzo Kashmere", subject = "ore", items = { [1] = ORE } }
+local twin2 = { sender = "Cowruzo Kashmere", subject = "ore", items = { [1] = ORE }, missing = true }
+local keep = WoW.inbox
+WoW.inbox = { twin, twin2 }
+local s9 = LM.ScanInbox()
+eq(LM.Count(s9)[s9.mails[1].fp], 1, "a twin whose row is missing: the other counts once")
+check(s9.resolved == false, "  and the scan isn't resolved, so that count proves nothing")
+twin2.missing = nil
+local s10 = LM.ScanInbox()
+check(s10.resolved and LM.Count(s10)[s10.mails[1].fp] == 2, "  with the row back: resolved, counted twice")
+WoW.inbox = keep
 WoW.inbox = {}
 local empty = LM.ScanInbox()
 check(empty.headers and empty.loaded == 0 and #empty.mails == 0, "an empty inbox is read whole: headers, no mails")

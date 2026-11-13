@@ -179,7 +179,7 @@ local function readMail(i)
 end
 
 -- The loaded inbox: { loaded, total, mails, resolved, headers }.
--- `resolved`: every mail has a fingerprint. `headers`: the counts were
+-- `resolved`: every loaded mail was read and has a fingerprint. `headers`: the counts were
 -- readable, every row up to `loaded` came back and none was withheld, so the
 -- header values (money, daysLeft, itemCount) describe the whole loaded inbox.
 -- Unreadable counts are { loaded = 0, total = 0, mails = {}, resolved = false,
@@ -197,7 +197,9 @@ function lib.ScanInbox()
             if not m.resolved then scan.resolved = false end
             if m.secret then scan.headers = false end
         else
-            scan.headers = false
+            -- A row that didn't come back: neither its header nor its fingerprint
+            -- is known, so a count over this scan can't prove a mail unique.
+            scan.headers, scan.resolved = false, false
         end
     end
     return scan

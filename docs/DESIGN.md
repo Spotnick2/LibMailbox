@@ -29,10 +29,11 @@ canReply, isGM, type, items = { { slot, itemID, link, count, isCurrency } }, res
   `system` when it can't be replied to, else `player`.
 - A slot is occupied when it has an item ID (an uncached item's name is `""`). Slots keep their
   numbers after a take (session 5).
-- `resolved` false: a secret attachment field or an attachment without a link. No fingerprint;
+- `resolved` false on a mail: a secret attachment field or an attachment without a link. No fingerprint;
   the header values stand.
 - A **withheld** mail (a secret header field) is `{ index, secret = true, resolved = false, items = {} }`.
-- `scan.resolved`: every mail has a fingerprint. `scan.headers`: the counts were readable, every
+- `scan.resolved`: every loaded mail was read and has a fingerprint (a row that didn't come back
+  makes it false: a count can't prove a mail unique without it). `scan.headers`: the counts were readable, every
   row up to `loaded` came back and none was withheld, so the header values describe the whole
   loaded inbox. Secret counts give `{ loaded = 0, total = 0, mails = {}, resolved = false,
   headers = false }`: unknown, never empty.
