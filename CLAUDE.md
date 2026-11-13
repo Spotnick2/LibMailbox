@@ -42,7 +42,10 @@ function, a returned field or a rule. A breaking change is `LibMailbox-2.0`.
 - **Secrets first:** `issecretvalue` before any other use of a value the client may withhold; a
   secret is never copied into a result.
 - Upgrades: `tests\test_upgrade.lua` loads synthetic newer, older, equal and half-loaded copies.
-  Once `r1` is tagged its file is frozen as `tests\fixtures\LibMailbox-r1.lua` for later upgrades.
+  `tests\test_upgrade_r1.lua` loads the real r1, frozen byte for byte as
+  `tests\fixtures\LibMailbox-r1.lua` (`git show r1:LibMailbox.lua`; its length and Adler-32 are
+  checked), under and over the current file. Never edit a fixture: a release that players will
+  embed adds its own beside it.
 
 ## Toolchain and commands
 
