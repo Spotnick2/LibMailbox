@@ -1,6 +1,6 @@
 -- Several addons embed copies of LibMailbox-1.0 and LibStub keeps the newest.
 -- EMBEDDED-LIBRARIES.md's first-release pattern: a synthetic newer copy (the
--- real r1 file is frozen as a fixture once tagged, for later upgrades).
+-- real r1 against the current file: test_upgrade_r1.lua).
 -- Proven here: a newer copy's functions replace the older's on the same
 -- table, which a held reference and a consumer's adapter both reach; an
 -- older or equal copy changes nothing; a newer copy that fails half-way makes

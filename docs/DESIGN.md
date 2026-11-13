@@ -73,6 +73,10 @@ older's on it. So:
 `tests/test_upgrade.lua` proves it with synthetic copies: newer (a held reference and an adapter
 made before reach the new functions; an older copy's scan goes through the new `Summary` and
 `Residual`), older and equal (nothing changes), and half-loaded (`Ready()` false).
+`tests/test_upgrade_r1.lua` does it against the real r1 (`tests/fixtures/LibMailbox-r1.lua`,
+frozen): the current file over it keeps the table, reaches an adapter made under r1, takes r1's
+scans and keeps their fingerprints (a consumer's remembered target still matches); under it,
+nothing changes.
 
 ## Not here
 
