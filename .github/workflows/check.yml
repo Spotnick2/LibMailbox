@@ -1,0 +1,38 @@
+name: Check
+
+# The library is never packaged on its own (no TOC: the packager would stop),
+# so this is syntax and tests only. What a consumer's zip holds under
+# Libs/LibMailbox-1.0/ is asserted in each consumer's CI.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Lua 5.1
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq lua5.1
+
+      # The test scaffolding, WowTestKit, at the commit tests/kit.pin names.
+      - name: Fetch WowTestKit at its pin
+        run: |
+          bash tests/fetch_kit.sh "$RUNNER_TEMP/WowTestKit"
+          echo "WOWTESTKIT=$RUNNER_TEMP/WowTestKit" >> "$GITHUB_ENV"
+
+      # WoW runs Lua 5.1, so the tests do too. tests/run.ps1 is the Windows
+      # entry point for the same files. No TOC: the XML's scripts are checked.
+      - name: Syntax check and unit tests
+        run: |
+          scripts=$(tr -d '\r' < LibMailbox-1.0.xml | perl -0pe 's/<!--.*?-->//gs' |
+            sed -n 's/.*<Script file="\([^"]*\)".*/\1/p' | tr '\' '/')
+          test -n "$scripts" || { echo "LibMailbox-1.0.xml lists no Script files"; exit 1; }
+          bash "$WOWTESTKIT/scripts/run.sh" "" $scripts
